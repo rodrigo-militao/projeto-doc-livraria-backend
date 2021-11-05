@@ -3,9 +3,14 @@ const app = express()
 const bodyParser = require('body-parser')
 const db = require("./db");
 
+const cors = require('cors');
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
 app.use(bodyParser.json())
 
-const PORT = 3000
+const PORT = 5001
 
 app.get('/', (req, res) => {
     db.findAllArticles()
@@ -65,5 +70,5 @@ app.delete('/:id', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log('Server is running on port 3000');
+    console.log('Server is running on port ' + PORT);
 });
