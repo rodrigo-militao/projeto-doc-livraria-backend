@@ -102,6 +102,26 @@ db.groups = {
       const [ rows ] = await connection.query('SELECT `title`, `order` FROM `groups`');
    
       return rows;
+   },
+   findGroupsAndArticles: async () => {
+      const connection = await connect();
+      const [ rows ] = await connection.query('SELECT g.id, g.title , g.`order`, a.url, a.title as articleTitle, a.`order` as articleOrder FROM `groups` g INNER JOIN articles a ON g.id = a.group');
+      //group rows by id
+      const groups = {};
+      rows.map(row => {
+         if (!groups[row.id]) groups[row.id] = {
+            id: row.id,
+            title: row.title,
+            order: row.order,
+            articles: []
+         };
+         groups[row.id].articles.push({
+            url: row.url,
+            title: row.articleTitle,
+            order: row.articleOrder
+         });
+      });
+      return Object.values(groups);
    }
 };
 
