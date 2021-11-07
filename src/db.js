@@ -23,8 +23,8 @@ db.articles = {
    
       return rows;
    },
-   update: async (id, article) => {
-      const { title, content, url } = article;
+   update: async data => {
+      const { title, content, url } = data;
       const connection = await connect();
       const rows = await connection.query('UPDATE `articles` SET `title` = ?, `content` = ?, `url` = ? WHERE `id` = ? LIMIT 1', [ title, content, url, id ], err => err ? false : true);
    
