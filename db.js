@@ -3,11 +3,11 @@ const connect = async () => {
    if (global.connection && global.connection.state !== 'disconnected') return global.connection;
 
    const mysql = require('mysql2/promise');
-   const db_user = 'carlisson';
-   const db_password = '12345678';
-   const db_host = 'db4free.net';
-   const db_port = 3306;
-   const db_name = 'robo_trade';
+   const db_user = "root"
+   const db_password = "12345678"
+   const db_host = "localhost"
+   const db_port = 3306
+   const db_name = "main"
    
    global.connection = await mysql.createConnection(`mysql://${db_user}:${db_password}@${db_host}:${db_port}/${db_name}`);
 
@@ -68,6 +68,7 @@ db.articles = {
    }
 };
 
+
 /* Queries by table `groups` */
 db.groups = {
    insert: async data => {
@@ -103,5 +104,6 @@ db.groups = {
       return rows;
    }
 };
+
 
 module.exports = db;
