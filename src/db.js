@@ -1,13 +1,15 @@
+'use strict';
+
 const db = { };
 const connect = async () => {
    if (global.connection && global.connection.state !== 'disconnected') return global.connection;
 
    const mysql = require('mysql2/promise');
-   const db_user = "root"
-   const db_password = "12345678"
-   const db_host = "localhost"
-   const db_port = 3306
-   const db_name = "main"
+   const db_user = 'root';
+   const db_password = '12345678';
+   const db_host = 'localhost';
+   const db_port = 3306;
+   const db_name = 'main';
    
    global.connection = await mysql.createConnection(`mysql://${db_user}:${db_password}@${db_host}:${db_port}/${db_name}`);
 
@@ -19,20 +21,20 @@ db.articles = {
    insert: async data => {
       const { url, group, title, content, order } = data;
       const connection = await connect();
-      const rows = await connection.query('INSERT INTO `articles` (`url`, `group`, `title`, `content`, `order`) VALUES (?, ?, ?, ?, ?)', [ url, group, title, content, order ], err => err ? false : true);
+      const rows = await connection.query('INSERT INTO `articles` (`url`, `group`, `title`, `content`, `order`) VALUES (?, ?, ?, ?, ?)', [ url, group, title, content, order ], err => !err);
    
       return rows;
    },
    update: async data => {
       const { title, content, url } = data;
       const connection = await connect();
-      const rows = await connection.query('UPDATE `articles` SET `title` = ?, `content` = ?, `url` = ? WHERE `id` = ? LIMIT 1', [ title, content, url, id ], err => err ? false : true);
+      const rows = await connection.query('UPDATE `articles` SET `title` = ?, `content` = ?, `url` = ? WHERE `id` = ? LIMIT 1', [ title, content, url, id ], err => !err);
    
       return rows;
    },
    delete: async id => {
       const connection = await connect();
-      const [ rows ] = await connection.query('DELETE FROM `articles` WHERE `id` = ? LIMIT 1', [ id ], err => err ? false : true);
+      const [ rows ] = await connection.query('DELETE FROM `articles` WHERE `id` = ? LIMIT 1', [ id ], err => !err);
    
       return rows;
    },
@@ -68,26 +70,25 @@ db.articles = {
    }
 };
 
-
 /* Queries by table `groups` */
 db.groups = {
    insert: async data => {
       const { title, order } = data;
       const connection = await connect();
-      const rows = await connection.query('INSERT INTO `groups` (`title`, `order`) VALUES (?, ?)', [ title, order ], err => err ? false : true);
+      const rows = await connection.query('INSERT INTO `groups` (`title`, `order`) VALUES (?, ?)', [ title, order ], err => !err);
    
       return rows;
    },
    update: async (id, group) => {
       const { title, order } = group;
       const connection = await connect();
-      const rows = await connection.query('UPDATE `groups` SET `title` = ?, `order` = ? WHERE `id` = ? LIMIT 1', [ title, order, id ], err => err ? false : true);
+      const rows = await connection.query('UPDATE `groups` SET `title` = ?, `order` = ? WHERE `id` = ? LIMIT 1', [ title, order, id ], err => !err);
    
       return rows;
    },
    delete: async id => {
       const connection = await connect();
-      const [ rows ] = await connection.query('DELETE FROM `groups` WHERE `id` = ? LIMIT 1', [ id ], err => err ? false : true);
+      const [ rows ] = await connection.query('DELETE FROM `groups` WHERE `id` = ? LIMIT 1', [ id ], err => !err);
    
       return rows;
    },
@@ -105,9 +106,10 @@ db.groups = {
    },
    findGroupsAndArticles: async () => {
       const connection = await connect();
-      const [ rows ] = await connection.query('SELECT g.id, g.title , g.`order`, a.url, a.title as articleTitle, a.`order` as articleOrder FROM `groups` g INNER JOIN articles a ON g.id = a.group');
-      //group rows by id
+      const [ rows ] = await connection.query('SELECT g.`id`, g.`title` , g.`order`, a.`url`, a.`title` as articleTitle, a.`order` as articleOrder FROM `groups` g INNER JOIN `articles` a ON g.`id` = a.`group`');
+
       const groups = {};
+
       rows.map(row => {
          if (!groups[row.id]) groups[row.id] = {
             id: row.id,
@@ -124,6 +126,5 @@ db.groups = {
       return Object.values(groups);
    }
 };
-
 
 module.exports = db;
