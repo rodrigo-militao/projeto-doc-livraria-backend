@@ -27,7 +27,7 @@ router.route('/:id').get((req, res) => {
 
 router.route('/').post((req, res) => {
    articles.insert(req.body).
-      then(response => res.json({ status: 'ok' })).
+      then(() => res.json({ status: 'ok' })).
       catch(err => {
          console.error(err.message);
          return res.status(500).json({ error: 'Erro no banco de dados.' });
