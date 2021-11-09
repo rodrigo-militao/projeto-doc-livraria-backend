@@ -100,7 +100,7 @@ db.groups = {
    },
    findAll: async () => {
       const connection = await connect();
-      const [ rows ] = await connection.query('SELECT `title`, `order` FROM `groups`');
+      const [ rows ] = await connection.query('SELECT `title`, `order`, `id` FROM `groups`');
    
       return rows;
    },
