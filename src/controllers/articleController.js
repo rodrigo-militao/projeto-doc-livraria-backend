@@ -54,4 +54,15 @@ router.route('/:id').delete((req, res) => {
       });
 });
 
+router.route('/search/:search').get((req, res) => {
+   const { search } = req.params;
+
+   articles.search(search).
+      then(response => res.json(response)).
+      catch(err => {
+         console.error(err.message);
+         return res.status(500).json({ error: 'Erro no banco de dados.' });
+      });
+});
+
 module.exports = router;
