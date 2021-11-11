@@ -121,7 +121,8 @@ db.groups = {
             id: row.id,
             title: row.title,
             order: row.order,
-            articles: []
+            articles: [],
+            relevance: 0
          };
          groups[row.id].articles.push({
             url: row.url,
@@ -131,7 +132,20 @@ db.groups = {
          });
       });
 
-      return Object.values(groups);
+      const groupIds = Object.keys(groups);
+
+      groupIds.map(id => {
+         const group = groups[id];
+
+         group.articles.map(article => {
+            group.relevance += article.relevance;
+         });
+         group.articles.sort((a, b) => b.relevance - a.relevance);
+      });
+      const returnGroups = Object.values(groups);
+
+      returnGroups.sort((a, b) => b.relevance - a.relevance);
+      return returnGroups;
    }
 };
 
