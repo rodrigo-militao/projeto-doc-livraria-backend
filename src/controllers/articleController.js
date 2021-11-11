@@ -18,7 +18,11 @@ router.route('/:id').get((req, res) => {
    const { id } = req.params;
 
    articles.findByUrl(id).
-      then(article => res.json(article)).
+      then(article => {
+         if (!article) return res.status(404).json({ error: 'Artigo não encontrado.' });
+         articles.increaseRelevance(id);
+         return res.json(article);         
+      }).
       catch(err => {
          console.error(err.message);
          return res.status(500).json({ error: 'Erro no banco de dados.' });

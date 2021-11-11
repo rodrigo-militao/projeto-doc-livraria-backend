@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
     `content` LONGTEXT NOT NULL,
     `order` INT NOT NULL,
     `created_by` INT NULL,
+    `relevance` INT NOT NULL DEFAULT 0,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	`updated_by` INT NULL,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

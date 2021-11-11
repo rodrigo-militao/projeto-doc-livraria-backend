@@ -64,7 +64,13 @@ db.articles = {
    },
    search: async title => {
       const connection = await connect();
-      const [ rows ] = await connection.query('SELECT `group`, `title`, `url` FROM `articles` WHERE `title` LIKE ? LIMIT 10', [ `%${title}%` ]);
+      const [ rows ] = await connection.query('SELECT g.`title` as `group`, a.`title`, a.`url` FROM `articles` a INNER JOIN `groups` g ON a.group = g.id WHERE a.`title` LIKE ? LIMIT 10', [ `%${title}%` ]);
+   
+      return rows;
+   },
+   increaseRelevance: async url => {
+      const connection = await connect();
+      const [ rows ] = await connection.query('UPDATE `articles` SET `relevance` = `relevance` + 1 WHERE `url` = ? LIMIT 1', [ url ]);
    
       return rows;
    }
@@ -106,7 +112,7 @@ db.groups = {
    },
    findGroupsAndArticles: async () => {
       const connection = await connect();
-      const [ rows ] = await connection.query('SELECT g.`id`, g.`title` , g.`order`, a.`url`, a.`title` as articleTitle, a.`order` as articleOrder FROM `groups` g INNER JOIN `articles` a ON g.`id` = a.`group`');
+      const [ rows ] = await connection.query('SELECT g.`id`, g.`title` , g.`order`, a.`url`, a.`title` as articleTitle, a.`order` as articleOrder, a.`relevance` as articleRelevance FROM `groups` g INNER JOIN `articles` a ON g.`id` = a.`group`');
 
       const groups = {};
 
@@ -120,9 +126,11 @@ db.groups = {
          groups[row.id].articles.push({
             url: row.url,
             title: row.articleTitle,
-            order: row.articleOrder
+            order: row.articleOrder,
+            relevance: row.articleRelevance
          });
       });
+
       return Object.values(groups);
    }
 };
