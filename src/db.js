@@ -1,5 +1,7 @@
 'use strict';
 
+const nodeBase64 = require('nodejs-base64-converter');
+
 const db = { };
 const connect = async () => {
    if (global.connection && global.connection.state !== 'disconnected') return global.connection;
@@ -21,7 +23,7 @@ db.articles = {
    insert: async data => {
       const { url, group, title, content, order } = data;
       const connection = await connect();
-      const rows = await connection.query('INSERT INTO `articles` (`url`, `group`, `title`, `content`, `order`) VALUES (?, ?, ?, ?, ?)', [ url, group, title, content, order ], err => !err);
+      const rows = await connection.query('INSERT INTO `articles` (`url`, `group`, `title`, `content`, `order`) VALUES (?, ?, ?, ?, ?)', [ url, group, title, nodeBase64.encode(content), order ], err => !err);
    
       return rows;
    },
