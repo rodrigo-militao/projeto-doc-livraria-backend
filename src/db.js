@@ -30,7 +30,7 @@ db.articles = {
    update: async data => {
       const { title, content, url } = data;
       const connection = await connect();
-      const rows = await connection.query('UPDATE `articles` SET `title` = ?, `content` = ?, `url` = ? WHERE `id` = ? LIMIT 1', [ title, content, url, id ], err => !err);
+      const rows = await connection.query('UPDATE `articles` SET `title` = ?, `content` = ?, `url` = ? WHERE `id` = ? LIMIT 1', [ title, nodeBase64.encode(content), url, id ], err => !err);
    
       return rows;
    },
